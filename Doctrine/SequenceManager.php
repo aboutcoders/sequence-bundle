@@ -1,0 +1,84 @@
+<?php
+
+namespace Abc\Bundle\SequenceBundle\Doctrine;
+
+use Abc\Bundle\SequenceBundle\Model\SequenceManager as BaseSequenceManager;
+use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Common\Persistence\ObjectRepository;
+
+/**
+ * @author Wojciech Ciolko <w.ciolko@gmail.com>
+ */
+class SequenceManager extends BaseSequenceManager
+{
+    /** @var ObjectManager */
+    protected $objectManager;
+    /** @var string */
+    protected $class;
+    /** @var ObjectRepository */
+    protected $repository;
+
+
+    /**
+     * @param ObjectManager $om
+     * @param string        $class
+     */
+    public function __construct(ObjectManager $om, $class)
+    {
+        $this->objectManager = $om;
+        $this->repository    = $om->getRepository($class);
+
+        $metadata    = $om->getClassMetadata($class);
+        $this->class = $metadata->getName();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getNextValue($name)
+    {
+        $sequence = $this->findByName($name);
+
+        $newValue = $sequence->getCurrentValue() + 1;
+        $sequence->setCurrentValue($newValue);
+        $this->objectManager->persist($sequence);
+        $this->objectManager->flush();
+
+        return $newValue;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getCurrentValue($name)
+    {
+        $sequence = $this->findByName($name);
+
+        return $sequence->getCurrentValue();
+    }
+
+    /**
+     * @param string $name
+     * @return object
+     */
+    private function findByName($name)
+    {
+        $sequence = $this->repository->findOneBy(array('name' => $name));
+        if (!$sequence) {
+            $sequence = new $this->class;
+            $sequence->setName($name);
+            $sequence->setCurrentValue(0);
+            $this->objectManager->persist($sequence);
+            $this->objectManager->flush();
+        }
+        return $sequence;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getClass()
+    {
+        return $this->class;
+    }
+}

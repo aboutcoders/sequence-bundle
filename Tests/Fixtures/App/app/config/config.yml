@@ -1,0 +1,41 @@
+imports:
+    - { resource: services.yml }
+
+framework:
+    secret: Hell yeah!
+    router: { resource: "%kernel.root_dir%/config/routing.yml" }
+    form: true
+    csrf_protection: true
+    templating:
+        engines: ['twig']
+    session: ~
+    default_locale: en
+    translator: { fallback: en }
+    profiler: { only_exceptions: false }
+
+monolog:
+    handlers:
+        main:
+            type:     stream
+            path:     "%kernel.logs_dir%/%kernel.environment%.log"
+            level:    debug
+
+# Twig Configuration
+twig:
+    debug:            "%kernel.debug%"
+    strict_variables: "%kernel.debug%"
+
+doctrine:
+    dbal:
+        driver:   "pdo_sqlite"
+        path:     "%kernel.cache_dir%/sqlite.db"
+
+    orm:
+        auto_generate_proxy_classes: true
+        auto_mapping: true
+
+swiftmailer:
+    disable_delivery: true
+
+abc_sequence:
+  db_driver: orm
