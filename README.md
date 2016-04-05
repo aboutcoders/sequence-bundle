@@ -3,6 +3,8 @@ Symfony Sequence Bundle
 
 A symfony bundle that provides abstract sequence implementation
 
+[![Build Status](https://travis-ci.org/aboutcoders/sequence-bundle.svg?branch=master)](https://travis-ci.org/aboutcoders/sequence-bundle)
+
 ## Configuration
 
 Add the bundle:
