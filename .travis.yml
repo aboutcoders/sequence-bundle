@@ -1,20 +1,20 @@
 language: php
-
 php:
-  - 5.6
-  - 7.0
-
+- 5.6
+- 7.0
 env:
-  - SYMFONY_VERSION=2.6.*
-  - SYMFONY_VERSION=2.8.*
-  - SYMFONY_VERSION=3.0.*
-
+- SYMFONY_VERSION=2.6.*
+- SYMFONY_VERSION=2.8.*
+- SYMFONY_VERSION=3.0.*
 before_script:
-  - composer require --prefer-source symfony/symfony:${SYMFONY_VERSION}
-  - wget http://getcomposer.org/composer.phar
-  - php -d memory_limit=-1 composer.phar install
-  - phpunit
-
+- composer require --prefer-source symfony/symfony:${SYMFONY_VERSION}
+- wget http://getcomposer.org/composer.phar
+- php -d memory_limit=-1 composer.phar install
+- phpunit
 cache:
   directories:
-    - $COMPOSER_CACHE_DIR
+  - $COMPOSER_CACHE_DIR
+notifications:
+  hipchat:
+    rooms:
+      secure: Ia2JuXGuxym79VcoiHb5scR8/05zKqagIKr/wNO9bEW6boXwStFqTTNdbdWBxua0vnKcs6tKO7592N5ixtMGPq1raAIx2PmGNq0+PrMTslk51tz562tl0xZ5NTMkrZvPqnA2IieCqptAA6uPq1p9JJQnDI7QO2y6vnR861gXWuxIT24KwknyclY3GijsGu7E/NHGWYROSJL4UGOOLiSa6YaShDu5cQfQQ7JLciCflDPcVM3VtJNsTu6qoVtAUbwlYBV8VEwhY/u/QJ9HsF6gvURAtp/OE5dT/x9Ngk+Kn1NP2b/u5jgJEk3Vc2YD2UZt1znOiMbhWKEv9Yqszlce04vSYx12vAvqcjyP2K7JpQupLe0fltb3/klCNS/qGmc7SM3h4YQVlLBTglwbOTMpqb/H0u42y3AnWf4f5+bH/0AE2bFOfq7IF7D8BN/4DWzkxUBkHSsHuZk4/YgkX/WdC5UIZTgkKoWdJhFkSzS6gBi0wsR0OmaOWZK00rLm51xzJOS+n+18SZ78DM8E7T2DeouQ8LGUY8gSi0cL5S/tFZzwtqBDP/aFLXbZST45FU/okxdxgWNQUYWzuDjvj4xiDQ7jQIfGbEh5G/aJmrPR0x+iQcAXxZzHWEj2Op1AXgoM54HHYUjJ6H3dqSVastN4DbOJWCyE834jTRguhfY7xY4=
