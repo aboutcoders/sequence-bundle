@@ -3,12 +3,12 @@
     "type": "symfony-bundle",
     "description": "A symfony bundle that provides abstract sequence implementation",
     "keywords": ["sequence", "doctrine"],
-    "homepage": "https://bitbucket.org/wciolko/abc-sequence-bundle",
+    "homepage": "htts://aboutcoders.com",
     "license": "AboutCoders",
     "authors": [
         {
             "name": "Wojciech Ciolko",
-            "email": "w.ciolko@gmail.com"
+            "email": "wojciech.ciolko@aboutcoders.com"
         }
     ],
     "require": {
