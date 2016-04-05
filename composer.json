@@ -3,7 +3,7 @@
     "type": "symfony-bundle",
     "description": "A symfony bundle that provides abstract sequence implementation",
     "keywords": ["sequence", "doctrine"],
-    "homepage": "htts://aboutcoders.com",
+    "homepage": "http://aboutcoders.com",
     "license": "AboutCoders",
     "authors": [
         {
