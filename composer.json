@@ -14,7 +14,7 @@
     "require": {
         "symfony/symfony": "~2.5",
         "sensio/framework-extra-bundle": "~3.0",
-        "gedmo/doctrine-extensions": "dev-master"
+        "gedmo/doctrine-extensions": "~2.0"
     },
     "require-dev": {
         "phpunit/phpunit": "~4.2",
@@ -23,8 +23,6 @@
         "symfony/monolog-bundle": "~2",
         "symfony/swiftmailer-bundle": "~2.3"
     },
-    "minimum-stability": "dev",
-    "prefer-stable": true,
     "autoload": {
         "psr-4": {"Abc\\Bundle\\SequenceBundle\\": ""}
     }
