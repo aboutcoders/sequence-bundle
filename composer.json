@@ -4,7 +4,7 @@
     "description": "A symfony bundle that provides abstract sequence implementation",
     "keywords": ["sequence", "doctrine"],
     "homepage": "http://aboutcoders.com",
-    "license": "AboutCoders",
+    "license": "MIT",
     "authors": [
         {
             "name": "Wojciech Ciolko",
