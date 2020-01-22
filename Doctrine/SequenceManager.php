@@ -5,6 +5,8 @@ namespace Abc\Bundle\SequenceBundle\Doctrine;
 use Abc\Bundle\SequenceBundle\Model\SequenceManager as BaseSequenceManager;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\DBAL\LockMode;
+use Doctrine\ORM\EntityManager;
 
 /**
  * @author Wojciech Ciolko <w.ciolko@gmail.com>
@@ -37,12 +39,15 @@ class SequenceManager extends BaseSequenceManager
      */
     public function getNextValue($name)
     {
-        $sequence = $this->findByName($name);
+        $this->objectManager->transactional(function (EntityManager $em) use ($name, &$newValue) {
+            $sequence = $this->findByName($name);
+            $this->objectManager->lock($sequence, LockMode::PESSIMISTIC_READ);
 
-        $newValue = $sequence->getCurrentValue() + 1;
-        $sequence->setCurrentValue($newValue);
-        $this->objectManager->persist($sequence);
-        $this->objectManager->flush();
+            $newValue = $sequence->getCurrentValue() + 1;
+            $sequence->setCurrentValue($newValue);
+            $this->objectManager->persist($sequence);
+            $this->objectManager->flush();
+        });
 
         return $newValue;
     }
