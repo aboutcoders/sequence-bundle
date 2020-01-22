@@ -3,8 +3,9 @@ namespace Abc\Bundle\SequenceBundle\Tests\Doctrine;
 
 use Abc\Bundle\SequenceBundle\Doctrine\SequenceManager;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
-use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\DBAL\LockMode;
+use Doctrine\ORM\EntityManagerInterface;
 
 /**
  * @author Wojciech Ciolko <w.ciolko@gmail.com>
@@ -15,7 +16,7 @@ class SequenceManagerTest extends \PHPUnit_Framework_TestCase
     private $class;
     /** @var ClassMetadata|\PHPUnit_Framework_MockObject_MockObject */
     private $classMetaData;
-    /** @var ObjectManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject */
     private $objectManager;
     /** @var ObjectRepository|\PHPUnit_Framework_MockObject_MockObject */
     private $repository;
@@ -27,7 +28,7 @@ class SequenceManagerTest extends \PHPUnit_Framework_TestCase
     {
         $this->class         = 'Abc\Bundle\SequenceBundle\Entity\Sequence';
         $this->classMetaData = $this->getMock('Doctrine\Common\Persistence\Mapping\ClassMetadata');
-        $this->objectManager = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
+        $this->objectManager = $this->getMock('Doctrine\ORM\EntityManagerInterface');
         $this->repository    = $this->getMock('Doctrine\Common\Persistence\ObjectRepository');
 
         $this->objectManager->expects($this->any())
@@ -99,15 +100,25 @@ class SequenceManagerTest extends \PHPUnit_Framework_TestCase
         $sequence->setCurrentValue($currentValue);
         $sequence->setName($sequenceName);
 
+        $this->objectManager->expects($this->once())
+            ->method('beginTransaction');
+        
         $this->repository->expects($this->once())
             ->method('findOneBy')
             ->with(array('name' => $sequenceName))
             ->willReturn($sequence);
 
         $this->objectManager->expects($this->once())
+            ->method('lock')
+            ->with($sequence, LockMode::PESSIMISTIC_READ);
+
+        $this->objectManager->expects($this->once())
             ->method('persist');
         $this->objectManager->expects($this->once())
             ->method('flush');
+
+        $this->objectManager->expects($this->once())
+            ->method('commit');
 
         $result = $this->subject->getNextValue($sequenceName);
 
