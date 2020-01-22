@@ -3,17 +3,17 @@
 namespace Abc\Bundle\SequenceBundle\Doctrine;
 
 use Abc\Bundle\SequenceBundle\Model\SequenceManager as BaseSequenceManager;
-use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\DBAL\LockMode;
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\PessimisticLockException;
 
 /**
  * @author Wojciech Ciolko <w.ciolko@gmail.com>
  */
 class SequenceManager extends BaseSequenceManager
 {
-    /** @var ObjectManager */
+    /** @var EntityManagerInterface */
     protected $objectManager;
     /** @var string */
     protected $class;
@@ -22,10 +22,10 @@ class SequenceManager extends BaseSequenceManager
 
 
     /**
-     * @param ObjectManager $om
-     * @param string        $class
+     * @param EntityManagerInterface $om
+     * @param string                 $class
      */
-    public function __construct(ObjectManager $om, $class)
+    public function __construct(EntityManagerInterface $om, $class)
     {
         $this->objectManager = $om;
         $this->repository    = $om->getRepository($class);
@@ -39,7 +39,9 @@ class SequenceManager extends BaseSequenceManager
      */
     public function getNextValue($name)
     {
-        $this->objectManager->transactional(function (EntityManager $em) use ($name, &$newValue) {
+        try {
+            $this->objectManager->beginTransaction();
+
             $sequence = $this->findByName($name);
             $this->objectManager->lock($sequence, LockMode::PESSIMISTIC_READ);
 
@@ -47,9 +49,14 @@ class SequenceManager extends BaseSequenceManager
             $sequence->setCurrentValue($newValue);
             $this->objectManager->persist($sequence);
             $this->objectManager->flush();
-        });
 
-        return $newValue;
+            $this->objectManager->commit();
+
+            return $newValue;
+        } catch (PessimisticLockException $e) {
+            $this->objectManager->rollback();
+            throw $e;
+        }
     }
 
     /**
