@@ -41,19 +41,18 @@ class SequenceManager extends BaseSequenceManager
     {
         try {
             $this->objectManager->beginTransaction();
-
             $sequence = $this->findByName($name);
             $this->objectManager->lock($sequence, LockMode::PESSIMISTIC_READ);
-
             $newValue = $sequence->getCurrentValue() + 1;
             $sequence->setCurrentValue($newValue);
             $this->objectManager->persist($sequence);
             $this->objectManager->flush();
-
             $this->objectManager->commit();
-
             return $newValue;
         } catch (PessimisticLockException $e) {
+            $this->objectManager->rollback();
+            throw $e;
+        } catch (\Exception $e) {
             $this->objectManager->rollback();
             throw $e;
         }
